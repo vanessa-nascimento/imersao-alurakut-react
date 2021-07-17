@@ -1,6 +1,6 @@
 import MainGrid from '../src/components/MainGrid'
 import Box from '../src/components/Box'
-import { AlurakutMenu, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommons';
+import { AlurakutMenu, OrkutNostalgicIconSet, AlurakutProfileSidebarMenuDefault } from '../src/lib/AlurakutCommons';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 
 function ProfileSidebar(props) {
@@ -8,6 +8,14 @@ function ProfileSidebar(props) {
   return (
     <Box>
       <img src={`https://github.com/${props.githubUser}.png`} style={{ borderRadius: '8px' }} />
+      <hr />
+      <p>
+        <a className="boxLink" href={`https://github.com/${props.githubUser}`}>
+          @{props.githubUser}
+        </a>
+      </p>
+      <hr />
+      <AlurakutProfileSidebarMenuDefault />
     </Box>
   )
 }
@@ -27,9 +35,11 @@ export default function Home() {
     <>
       <AlurakutMenu />
       <MainGrid>
+
         <div className="profileArea" style={{ gridArea: 'profileArea' }}>
           <ProfileSidebar githubUser={usuarioAleatorio} />
         </div>
+
         <div className="welcomeArea" style={{ gridArea: 'welcomeArea' }}>
           <Box>
             <h1 className="title">
@@ -38,7 +48,34 @@ export default function Home() {
 
             <OrkutNostalgicIconSet />
           </Box>
+
+          <Box>
+            <h2 className="subTitle">O que você faz para a comunidade?</h2>
+            <form onSubmit="">
+
+              <div>
+                <input 
+                  placeholder="Qual vai ser o nome da sua comunidade?"
+                  name="title"
+                  aria-label="Qual vai ser o nome da sua comunidade?" />
+              </div>
+
+              <div>
+                <input 
+                  placeholder="Coloque uma URL para usarmos de capa"
+                  name="image"
+                  aria-label="Coloque uma URL para usarmos de capa" />
+              </div>
+
+              <button>
+                Criar comunidade
+              </button>
+
+            </form>
+          </Box>
+
         </div>
+
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
