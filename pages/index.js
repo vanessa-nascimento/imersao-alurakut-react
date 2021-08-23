@@ -2,11 +2,11 @@ import MainGrid from '../src/components/MainGrid'
 import Box from '../src/components/Box'
 import { AlurakutMenu, OrkutNostalgicIconSet, AlurakutProfileSidebarMenuDefault } from '../src/lib/AlurakutCommons';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
+import React from 'react';
 
 function ProfileSidebar(props) {
-  console.log(props);
   return (
-    <Box>
+    <Box as="aside">
       <img src={`https://github.com/${props.githubUser}.png`} style={{ borderRadius: '8px' }} />
       <hr />
       <p>
@@ -21,19 +21,41 @@ function ProfileSidebar(props) {
 }
 
 export default function Home() {
+  const dadosComunidade = [
+    {
+      id: '382938928938',
+      title: 'Eu odeio acordar cedo',
+      image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'
+    },{
+      id: '382938320120',
+      title: 'PicPay Front-end',
+      image: 'https://github.com/picpay.png'
+    }
+  ];
   const usuarioAleatorio = 'vanessa-nascimento';
   const favoritePeoples = [
-    'juunegreiros',
-    'omariosouto',
-    'felipefialho',
-    'willianjusten',
-    'loiane',
-    'peas'
-  ]
+    'laryts',
+    'esterfaniasantos',
+    'nicolerizzinunes',
+    'raphzandrade',
+    'jcamargodev',
+    'ttorquati',
+    'guilhermebc',
+    'bonomiandreia'
+  ];
+
+  const [comunidades, setComunidades] = React.useState(dadosComunidade);
+  const [seguidores, setSeguidores] = React.useState([]);
+
+  React.useEffect(() => {
+    fetch('https://api.github.com/users/vanessa-nascimento/followers')
+    .then(res => res.json())
+    .then(data => setSeguidores(data))
+}, []);
 
   return (
     <>
-      <AlurakutMenu />
+      <AlurakutMenu githubUser={usuarioAleatorio} />
       <MainGrid>
 
         <div className="profileArea" style={{ gridArea: 'profileArea' }}>
@@ -51,7 +73,19 @@ export default function Home() {
 
           <Box>
             <h2 className="subTitle">O que você faz para a comunidade?</h2>
-            <form onSubmit="">
+            <form onSubmit={ function handleCriaComunidade(e){ 
+              e.preventDefault();
+              const formData = new FormData(e.target);
+
+              const comunidade = {
+                id: new Date().toISOString(),
+                title: formData.get('title'),
+                image: formData.get('image')
+              }
+              
+              const comunidadesAtualizadas = [...comunidades, comunidade];
+              setComunidades(comunidadesAtualizadas);
+            }}>
 
               <div>
                 <input 
@@ -77,14 +111,50 @@ export default function Home() {
         </div>
 
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
+        <ProfileRelationsBoxWrapper>
+            <h2 className="smallTitle">
+              Seguidores ({seguidores.length})
+            </h2>
+
+            <ul>
+              {seguidores.map((itemAtual, indice) => {
+                if(indice <= 5) return (
+                  <li key={itemAtual.id}>
+                    <a href={itemAtual.html_url}>
+                      <img src={`https://github.com/${itemAtual.login}.png`} />
+                      <span>{itemAtual.login}</span>
+                    </a>
+                  </li>
+                )
+              })}
+            </ul>
+          </ProfileRelationsBoxWrapper>
+          <ProfileRelationsBoxWrapper>
+            <h2 className="smallTitle">
+              Comunidades ({comunidades.length})
+            </h2>
+
+            <ul>
+              {comunidades.map((itemAtual, indice) => {
+                if(indice <= 5) return (
+                  <li key={itemAtual.id}>
+                    <a href={`/users/${itemAtual.title}`} key={itemAtual.title}>
+                      <img src={itemAtual.image} />
+                      <span>{itemAtual.title}</span>
+                    </a>
+                  </li>
+                )
+              })}
+            </ul>
+          </ProfileRelationsBoxWrapper>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
               Pessoas da comunidade ({favoritePeoples.length})
             </h2>
 
             <ul>
-              {favoritePeoples.map((itemAtual) => {
-                return (
+              {favoritePeoples.map((itemAtual, indice) => {
+                if(indice <= 5) return ( 
                   <li>
                     <a href={`/users/${itemAtual}`} key={itemAtual}>
                       <img src={`https://github.com/${itemAtual}.png`} />
